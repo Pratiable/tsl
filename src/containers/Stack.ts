@@ -1,9 +1,5 @@
 export class Stack<T> {
-  private data: T[];
-
-  constructor() {
-    this.data = [];
-  }
+  private readonly data: T[] = [];
 
   push(value: T): void {
     this.data.push(value);
@@ -25,7 +21,7 @@ export class Stack<T> {
     return this.data.at(-1)!;
   }
 
-  empty(): boolean {
+  isEmpty(): boolean {
     return this.data.length === 0;
   }
 

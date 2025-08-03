@@ -9,7 +9,7 @@ describe('Stack', () => {
 
   describe('Basic functionality', () => {
     test('Creates empty stack correctly', () => {
-      expect(stack.empty()).toBe(true);
+      expect(stack.isEmpty()).toBe(true);
       expect(stack.size()).toBe(0);
     });
 
@@ -18,7 +18,7 @@ describe('Stack', () => {
       stack.push(2);
 
       expect(stack.size()).toBe(2);
-      expect(stack.empty()).toBe(false);
+      expect(stack.isEmpty()).toBe(false);
       expect(stack.top()).toBe(2);
     });
 
@@ -36,7 +36,7 @@ describe('Stack', () => {
       stack.push(2);
       stack.clear();
 
-      expect(stack.empty()).toBe(true);
+      expect(stack.isEmpty()).toBe(true);
       expect(stack.size()).toBe(0);
     });
   });
