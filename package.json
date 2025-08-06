@@ -1,7 +1,7 @@
 {
   "name": "tsl",
   "version": "1.0.0",
-  "description": "TypeScript Standard Library - A comprehensive STL implementation for TypeScript/JavaScript",
+  "description": "STL-inspired data structures and algorithms for TypeScript",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {

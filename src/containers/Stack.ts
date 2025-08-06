@@ -32,4 +32,6 @@ export class Stack<T> {
   clear(): void {
     this.data.length = 0;
   }
+
+  // TODO: swap
 }
