@@ -1,7 +1,7 @@
 export class List<T> {
-  protected head: ListNode<T> | null;
-  protected tail: ListNode<T> | null;
-  protected _size: number;
+  private head: ListNode<T> | null;
+  private tail: ListNode<T> | null;
+  private _size: number;
 
   constructor() {
     this.head = null;
@@ -40,7 +40,7 @@ export class List<T> {
   }
 
   front(): T {
-    if (this._size == 0) {
+    if (this._size === 0) {
       throw new Error('List is empty');
     }
 
@@ -48,7 +48,7 @@ export class List<T> {
   }
 
   back(): T {
-    if (this._size == 0) {
+    if (this._size === 0) {
       throw new Error('List is empty');
     }
 
@@ -100,16 +100,8 @@ export class List<T> {
       return;
     }
 
-    // TODO: Improve performance for large lists by optimizing traversal.
-    // Currently, it always starts from the head. This should be changed to
-    // iterate from the head or tail, depending on which is closer to the index.
-    let cur: ListNode<T> = this.head!;
+    const cur: ListNode<T> = this.getNode(index);
     const node: ListNode<T> = new ListNode(value);
-
-    for (let i = 1; i <= this._size; i++) {
-      cur = cur.next!;
-      if (i === index) break;
-    }
 
     node.prev = cur.prev;
     node.next = cur;
@@ -133,15 +125,7 @@ export class List<T> {
       return;
     }
 
-    // TODO: Improve performance for large lists by optimizing traversal.
-    // Currently, it always starts from the head. This should be changed to
-    // iterate from the head or tail, depending on which is closer to the index.
-    let cur: ListNode<T> = this.head!;
-
-    for (let i = 1; i < this._size; i++) {
-      cur = cur.next!;
-      if (i === index) break;
-    }
+    const cur: ListNode<T> = this.getNode(index);
 
     cur.prev!.next = cur.next;
     cur.next!.prev = cur.prev;
@@ -172,11 +156,47 @@ export class List<T> {
     this._size = 0;
   }
 
+  private getNode(index: number): ListNode<T> {
+    if (index < 0 || index >= this._size) {
+      throw new RangeError(`Index out of bounds`);
+    }
+
+    if (index <= (this._size >> 1)) {
+      let node = this.head!;
+
+      for (let i = 0; i < index; i++) node = node.next!;
+
+      return node;
+    } else {
+      let node = this.tail!;
+
+      for (let i = this._size - 1; i > index; i--) node = node.prev!;
+
+      return node;
+    }
+  }
+
+  at(index: number): T {
+    return this.getNode(index).value;
+  }
+
   *[Symbol.iterator](): IterableIterator<T> {
     let cur = this.head;
     while (cur) {
       yield cur.value;
       cur = cur.next;
+    }
+  }
+
+  forward(): IterableIterator<T> {
+    return this[Symbol.iterator]();
+  }
+
+  *reverse(): IterableIterator<T> {
+    let cur = this.tail;
+    while (cur) {
+      yield cur.value;
+      cur = cur.prev;
     }
   }
 }

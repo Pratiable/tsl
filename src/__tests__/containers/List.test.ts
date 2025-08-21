@@ -1,22 +1,10 @@
 import { List } from '../../containers/List';
 
-class TestableList<T> extends List<T> {
-  public toArrayReverse(): T[] {
-    const result: T[] = [];
-    let cur = this.tail;
-    while (cur) {
-      result.push(cur.value);
-      cur = cur.prev;
-    }
-    return result;
-  }
-}
-
 describe('List', () => {
-  let list: TestableList<number>;
+  let list: List<number>;
 
   beforeEach(() => {
-    list = new TestableList<number>();
+    list = new List<number>();
   });
 
   describe('Basic functionality', () => {
@@ -155,6 +143,47 @@ describe('List', () => {
       expect(list.front()).toBe(10);
       expect(list.back()).toBe(15);
     });
+
+    test('forward() iterates forward same as Symbol.iterator', () => {
+      list.pushBack(1);
+      list.pushBack(2);
+      list.pushBack(3);
+
+      expect(Array.from(list.forward())).toEqual([1, 2, 3]);
+      expect([...list]).toEqual(Array.from(list.forward()));
+    });
+
+    test('returns head, middle, and tail correctly', () => {
+      for (let i = 1; i <= 5; i++) list.pushBack(i);
+      expect(list.size()).toBe(5);
+
+      const headValue = list.at(0);
+      const midValue = list.at(2);
+      const tailValue = list.at(4);
+
+      expect(headValue).toBe(1);
+      expect(midValue).toBe(3);
+      expect(tailValue).toBe(5);
+    });
+
+    test('works correctly after insert and erase operations', () => {
+      [1, 2, 3, 4].forEach((v) => list.pushBack(v));
+      expect([...list]).toEqual([1, 2, 3, 4]);
+
+      list.insert(2, 99);
+      expect(list.at(2)).toBe(99);
+      expect([...list]).toEqual([1, 2, 99, 3, 4]);
+
+      list.erase(1);
+      expect(list.at(1)).toBe(99);
+      expect([...list]).toEqual([1, 99, 3, 4]);
+
+      list.popFront();
+      list.popBack();
+      expect(list.at(0)).toBe(99);
+      expect(list.at(1)).toBe(3);
+      expect([...list]).toEqual([99, 3]);
+    });
   });
 
   describe('Exceptions', () => {
@@ -205,6 +234,16 @@ describe('List', () => {
       list.popFront();
       list.popBack();
       expect([...list]).toEqual([2]);
+    });
+
+    test('throws RangeError on invalid indices', () => {
+      expect(() => list.at(0)).toThrow('Index out of bounds');
+
+      list.pushBack(10);
+      list.pushBack(20);
+
+      expect(() => list.at(-1)).toThrow('Index out of bounds');
+      expect(() => list.at(2)).toThrow('Index out of bounds');
     });
   });
 
@@ -311,14 +350,13 @@ describe('List', () => {
       list.pushFront(5);
 
       expect([...list]).toEqual([5, 10, 15, 20]);
-
-      expect(list.toArrayReverse()).toEqual([20, 15, 10, 5]);
+      expect(Array.from(list.reverse())).toEqual([20, 15, 10, 5]);
 
       list.erase(1);
       list.popBack();
 
       expect([...list]).toEqual([5, 15]);
-      expect(list.toArrayReverse()).toEqual([15, 5]);
+      expect(Array.from(list.reverse())).toEqual([15, 5]);
     });
   });
 });
